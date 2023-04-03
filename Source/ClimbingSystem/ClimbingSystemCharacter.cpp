@@ -9,7 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
+#include "DebugHelper.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AClimbingSystemCharacter
@@ -64,6 +64,8 @@ void AClimbingSystemCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	Debug::Print(TEXT("Debug working"));
 }
 
 //////////////////////////////////////////////////////////////////////////

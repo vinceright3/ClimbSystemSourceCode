@@ -4,7 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CustomMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
@@ -14,7 +14,8 @@
 //////////////////////////////////////////////////////////////////////////
 // AClimbingSystemCharacter
 
-AClimbingSystemCharacter::AClimbingSystemCharacter()
+AClimbingSystemCharacter::AClimbingSystemCharacter(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -65,7 +66,7 @@ void AClimbingSystemCharacter::BeginPlay()
 		}
 	}
 
-	
+	CustomMovementComponent = Cast<UCustomMovementComponent>(GetCharacterMovement());
 }
 
 //////////////////////////////////////////////////////////////////////////

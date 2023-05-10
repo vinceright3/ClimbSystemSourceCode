@@ -7,7 +7,6 @@
 #include "InputActionValue.h"
 #include "ClimbingSystemCharacter.generated.h"
 
-class UCustomMovementComponent;
 
 UCLASS(config=Game)
 class AClimbingSystemCharacter : public ACharacter
@@ -15,7 +14,7 @@ class AClimbingSystemCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	AClimbingSystemCharacter(const FObjectInitializer& ObjectInitializer);
+	AClimbingSystemCharacter();
 	
 private:
 	/** Camera boom positioning the camera behind the character */
@@ -26,9 +25,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	UCustomMovementComponent* CustomMovementComponent;
-
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -68,7 +64,5 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-	FORCEINLINE UCustomMovementComponent* GetCustomMovementComponent() const {return CustomMovementComponent;}
 };
 

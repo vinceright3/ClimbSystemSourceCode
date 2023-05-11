@@ -14,11 +14,20 @@ class CLIMBINGSYSTEM_API UCustomMovementComponent : public UCharacterMovementCom
 {
 	GENERATED_BODY()
 
+public:
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
 private:
 
 #pragma region ClimbTraces
 	
 	TArray<FHitResult> DoCapsuleTraceMultiByObject(const FVector& Start,const FVector& End,bool bShowDebugShape = false);
+
+#pragma endregion
+
+#pragma region ClimbCore
+	
+	void TraceClimbableSurfaces();
 
 #pragma endregion
 

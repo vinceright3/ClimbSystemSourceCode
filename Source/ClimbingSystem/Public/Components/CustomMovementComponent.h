@@ -65,6 +65,8 @@ private:
 
 	bool CheckShouldStopClimbing();
 
+	bool CheckHasReachedFloor();
+
 	FQuat GetClimbRotation(float DeltaTime);
 
 	void SnapMovementToClimableSurfaces(float DeltaTime);

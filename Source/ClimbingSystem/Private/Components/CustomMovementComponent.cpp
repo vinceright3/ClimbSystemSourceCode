@@ -87,6 +87,21 @@ float UCustomMovementComponent::GetMaxAcceleration() const
 	}
 }
 
+FVector UCustomMovementComponent::ConstrainAnimRootMotionVelocity(const FVector & RootMotionVelocity, const FVector & CurrentVelocity) const
+{	
+	const bool bIsPlayingRMMontage =
+	IsFalling() && OwningPlayerAnimInstance && OwningPlayerAnimInstance->IsAnyMontagePlaying();
+
+	if(bIsPlayingRMMontage)
+	{
+		return RootMotionVelocity;
+	}
+	else
+	{
+		return Super::ConstrainAnimRootMotionVelocity(RootMotionVelocity,CurrentVelocity);
+	}
+}
+
 #pragma region ClimbTraces
 
 TArray<FHitResult> UCustomMovementComponent::DoCapsuleTraceMultiByObject(const FVector & Start, const FVector & End, bool bShowDebugShape,bool bDrawPersistantShapes)
@@ -242,12 +257,9 @@ void UCustomMovementComponent::PhysClimb(float deltaTime, int32 Iterations)
 	SnapMovementToClimableSurfaces(deltaTime);
 
 	if(CheckHasReachedLedge())
-	{
-		Debug::Print(TEXT("Ledge Reached"),FColor::Green,1);
-	}
-	else
-	{
-		Debug::Print(TEXT("Ledge Not Reached"),FColor::Red,1);
+	{	
+		StopClimbing();
+		PlayClimbMontage(ClimbToTopMontage);
 	}
 }
 
@@ -352,7 +364,7 @@ bool UCustomMovementComponent::CheckHasReachedLedge()
 		const FVector WalkableSurfaceTraceEnd = WalkableSurfaceTraceStart + DownVector * 100.f;
 
 		FHitResult WalkabkeSurfaceHitResult =
-		DoLineTraceSingleByObject(WalkableSurfaceTraceStart,WalkableSurfaceTraceEnd,true);
+		DoLineTraceSingleByObject(WalkableSurfaceTraceStart,WalkableSurfaceTraceEnd);
 
 		if(WalkabkeSurfaceHitResult.bBlockingHit && GetUnrotatedClimbVelocity().Z > 10.f)
 		{
@@ -388,7 +400,7 @@ FHitResult UCustomMovementComponent::TraceFromEyeHeight(float TraceDistance, flo
 	const FVector Start = ComponentLocation + EyeHeightOffset;
 	const FVector End = Start + UpdatedComponent->GetForwardVector() * TraceDistance;
 
-	return DoLineTraceSingleByObject(Start,End,true);
+	return DoLineTraceSingleByObject(Start,End);
 }
 
 void UCustomMovementComponent::PlayClimbMontage(UAnimMontage * MontageToPlay)
@@ -405,6 +417,10 @@ void UCustomMovementComponent::OnClimbMontageEnded(UAnimMontage * Montage, bool 
 	if(Montage == IdleToClimbMontage)
 	{
 		StartClimbing();
+	}
+	else
+	{
+		SetMovementMode(MOVE_Walking);
 	}
 }
 

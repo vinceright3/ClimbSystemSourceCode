@@ -258,7 +258,6 @@ void UCustomMovementComponent::PhysClimb(float deltaTime, int32 Iterations)
 
 	if(CheckHasReachedLedge())
 	{	
-		StopClimbing();
 		PlayClimbMontage(ClimbToTopMontage);
 	}
 }

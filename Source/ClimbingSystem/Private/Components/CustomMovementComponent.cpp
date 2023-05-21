@@ -204,7 +204,7 @@ bool UCustomMovementComponent::CanStartClimbing()
 bool UCustomMovementComponent::CanClimbDownLedge()
 {
 	if(IsFalling()) return false;
-
+	 
 	const FVector ComponentLocation = UpdatedComponent->GetComponentLocation();
 	const FVector ComponentForward = UpdatedComponent->GetForwardVector();
 	const FVector DownVector = -UpdatedComponent->GetUpVector();

@@ -176,7 +176,7 @@ void UCustomMovementComponent::ToggleClimbing(bool bEnableClimb)
 	if(bEnableClimb)
 	{
 		if(CanStartClimbing())
-		{
+		{ 
 			//Enter the climb state
 			PlayClimbMontage(IdleToClimbMontage);
 		}

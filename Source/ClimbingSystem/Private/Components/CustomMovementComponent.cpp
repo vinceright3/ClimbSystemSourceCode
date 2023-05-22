@@ -6,6 +6,8 @@
 #include "ClimbingSystem/ClimbingSystemCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "ClimbingSystem/ClimbingSystemCharacter.h"
+#include "MotionWarpingComponent.h"
 
 #include "ClimbingSystem/DebugHelper.h"
 
@@ -20,6 +22,8 @@ void UCustomMovementComponent::BeginPlay()
 		OwningPlayerAnimInstance->OnMontageEnded.AddDynamic(this,&UCustomMovementComponent::OnClimbMontageEnded);
 		OwningPlayerAnimInstance->OnMontageBlendingOut.AddDynamic(this,&UCustomMovementComponent::OnClimbMontageEnded);
 	}
+
+	OwningPlayerCharacter = Cast<AClimbingSystemCharacter>(CharacterOwner);
 }
 
 void UCustomMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -415,14 +419,13 @@ void UCustomMovementComponent::TryStartVaulting()
 
 	if(CanStartVaulting(VaultStartPosition,VaultLandPosition))
 	{
-		//Start vaulting
-		Debug::Print(TEXT("Start position: ") + VaultStartPosition.ToCompactString());
-		Debug::Print(TEXT("Land position: ") + VaultLandPosition.ToCompactString());
+		SetMotionWarpTarget(FName("VaultStartPoint"),VaultStartPosition);
+		SetMotionWarpTarget(FName("VaultEndPoint"),VaultLandPosition);
+
+		StartClimbing();
+		PlayClimbMontage(VaultMontage);
 	}
-	else
-	{
-		Debug::Print(TEXT("Unable to vault "));
-	}
+	
 }
 
 bool UCustomMovementComponent::CanStartVaulting(FVector& OutVaultStartPosition,FVector& OutVaultLandPosition)
@@ -451,7 +454,7 @@ bool UCustomMovementComponent::CanStartVaulting(FVector& OutVaultStartPosition,F
 			OutVaultStartPosition = VaultTraceHit.ImpactPoint;
 		}
 
-		if(i == 4 && VaultTraceHit.bBlockingHit)
+		if(i == 3 && VaultTraceHit.bBlockingHit)
 		{
 			OutVaultLandPosition = VaultTraceHit.ImpactPoint;
 		}
@@ -513,10 +516,20 @@ void UCustomMovementComponent::OnClimbMontageEnded(UAnimMontage * Montage, bool 
 		StopMovementImmediately();
 	}
 	
-	if(Montage == ClimbToTopMontage)
+	if(Montage == ClimbToTopMontage || Montage == VaultMontage)
 	{
 		SetMovementMode(MOVE_Walking);
 	}
+}
+
+void UCustomMovementComponent::SetMotionWarpTarget(const FName & InWarpTargetName, const FVector & InTargetPosition)
+{
+	if(!OwningPlayerCharacter) return;
+
+	OwningPlayerCharacter->GetMotionWarpingComponent()->AddOrUpdateWarpTargetFromLocation(
+		InWarpTargetName,
+		InTargetPosition
+	);
 }
 
 FVector UCustomMovementComponent::GetUnrotatedClimbVelocity() const

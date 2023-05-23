@@ -30,7 +30,6 @@ void UCustomMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 {
 	Super::TickComponent(DeltaTime,TickType, ThisTickFunction);
 
-	/*CanClimbDownLedge();*/
 }
 
 void UCustomMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode)
@@ -523,6 +522,30 @@ void UCustomMovementComponent::OnClimbMontageEnded(UAnimMontage * Montage, bool 
 	if(Montage == ClimbToTopMontage || Montage == VaultMontage)
 	{
 		SetMovementMode(MOVE_Walking);
+	}
+}
+
+void UCustomMovementComponent::RequestHopping()
+{	
+	const FVector UnrotatedLastInputVector =
+	UKismetMathLibrary::Quat_UnrotateVector(UpdatedComponent->GetComponentQuat(),GetLastInputVector());
+	
+	const float DotResult =
+	FVector::DotProduct(UnrotatedLastInputVector.GetSafeNormal(), FVector::UpVector);
+
+	Debug::Print(TEXT("Dot result: ") + FString::SanitizeFloat(DotResult));
+
+	if(DotResult>=0.9f)
+	{
+		Debug::Print(TEXT("Hop Up"));
+	}
+	else if(DotResult<=-0.9f)
+	{
+		Debug::Print(TEXT("Hop Down"));
+	}
+	else
+	{
+		Debug::Print(TEXT("Invalid Input Range"));
 	}
 }
 

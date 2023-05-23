@@ -70,7 +70,11 @@ void AClimbingSystemCharacter::BeginPlay()
 		}
 	}
 
-	
+	if(CustomMovementComponent)
+	{
+		CustomMovementComponent->OnEnterClimbStateDelegate.BindUObject(this,&ThisClass::OnPlayerEnterClimbState);
+		CustomMovementComponent->OnExitClimbStateDelegate.BindUObject(this,&ThisClass::OnPlayerExitClimbState);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -179,6 +183,16 @@ void AClimbingSystemCharacter::OnClimbActionStarted(const FInputActionValue & Va
 	{
 		CustomMovementComponent->ToggleClimbing(false);
 	}
+}
+
+void AClimbingSystemCharacter::OnPlayerEnterClimbState()
+{
+	Debug::Print(TEXT("Entered climb state"));
+}
+
+void AClimbingSystemCharacter::OnPlayerExitClimbState()
+{
+	Debug::Print(TEXT("Exited climb state"));
 }
 
 

@@ -446,7 +446,7 @@ bool UCustomMovementComponent::CanStartVaulting(FVector& OutVaultStartPosition,F
 	for(int32 i = 0; i<5; i++)
 	{
 		const FVector Start = ComponentLocation + UpVector * 100.f + 
-		ComponentForward * 100.f * (i+1);
+		ComponentForward * 80.f * (i+1);
 
 		const FVector End = Start + DownVector * 100.f * (i+1);
 
